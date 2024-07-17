@@ -1,7 +1,16 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\scantemp\\source\\repos\\Ayoobf\\trmua-utils\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{8443B601-876C-48CA-B894-631B04CABC4C}|trmua-utils\\trmua-utils.csproj|c:\\users\\scantemp\\source\\repos\\ayoobf\\trmua-utils\\trmua-utils\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{8443B601-876C-48CA-B894-631B04CABC4C}|trmua-utils\\trmua-utils.csproj|solutionrelative:trmua-utils\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\scantemp\\source\\repos\\Ayoobf\\trmua-utils\\README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,11 +18,32 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\scantemp\\source\\repos\\Ayoobf\\trmua-utils\\trmua-utils\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "trmua-utils\\MainWindow.xaml",
+              "ToolTip": "C:\\Users\\scantemp\\source\\repos\\Ayoobf\\trmua-utils\\trmua-utils\\MainWindow.xaml",
+              "RelativeToolTip": "trmua-utils\\MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-07-17T11:55:46.326Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "README.md",
+              "DocumentMoniker": "C:\\Users\\scantemp\\source\\repos\\Ayoobf\\trmua-utils\\README.md",
+              "RelativeDocumentMoniker": "README.md",
+              "ToolTip": "C:\\Users\\scantemp\\source\\repos\\Ayoobf\\trmua-utils\\README.md",
+              "RelativeToolTip": "README.md",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAtAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2024-07-17T11:37:14.978Z",
+              "EditorCaption": ""
             }
           ]
         }
