@@ -34,5 +34,17 @@ namespace trmua_utils.Properties {
                 this["ThumbsFolderPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RotateFolderPath {
+            get {
+                return ((string)(this["RotateFolderPath"]));
+            }
+            set {
+                this["RotateFolderPath"] = value;
+            }
+        }
     }
 }
