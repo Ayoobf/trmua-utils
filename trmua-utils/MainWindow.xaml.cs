@@ -10,11 +10,13 @@ namespace trmua_utils
     public partial class MainWindow : Window
     {
         private RotateFile _rotateFile;
+        private RemoveThumbs _removeThumbs;
         public MainWindow()
         {
             InitializeComponent();
             LoadSettings();
             _rotateFile = new RotateFile();
+            _removeThumbs = new RemoveThumbs();
             //_rotateFile.LogMessage += LogMessage;
         }
 
@@ -120,6 +122,34 @@ namespace trmua_utils
             {
                 outputTextBlock.Text += message + Environment.NewLine;
             });
+        }
+
+        private async void removeThumbs_Click(object sender, RoutedEventArgs e)
+        {
+            if (String.IsNullOrWhiteSpace(thumbsFolderPath.Text))
+            {
+                MessageBox.Show("Please Select a folder first. ", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            rotate.IsEnabled = false;
+            Stop.IsEnabled = true;
+            var progress = new Progress<int>(value =>
+            {
+                // Update progress bar if you add one
+            });
+            try
+            {
+                await _removeThumbs.RemoveThumbsAsync(thumbsFolderPath.Text, progress, Dispatcher);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                rotate.IsEnabled = true;
+                Stop.IsEnabled = false;
+            }
         }
     }
 }
