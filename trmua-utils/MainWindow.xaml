@@ -36,7 +36,7 @@
                     <TextBlock Name="outputTextBlock" Background="#E8E9EB" Padding="5" TextWrapping="Wrap" VerticalAlignment="Stretch"/>
                 </Border>
 
-                <Button Grid.Row="4" Name="Stop" Height="25" Margin="5 10" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" Width="200">Stop</Button>
+                <Button Grid.Row="4" Name="Stop" Height="25" Margin="5 10" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" Width="200" Click="Stop_Click">Stop</Button>
             </Grid>
         </TabItem>
         <TabItem Header="Settings" Height="22" Margin="-2,0,-2,0" VerticalAlignment="Bottom">

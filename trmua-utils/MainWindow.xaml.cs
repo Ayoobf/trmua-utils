@@ -18,7 +18,7 @@ namespace trmua_utils
             //_rotateFile.LogMessage += LogMessage;
         }
 
-      
+
         private void LoadSettings()
         {
             if (Properties.Settings.Default.ThumbsFolderPath != null)
@@ -99,6 +99,21 @@ namespace trmua_utils
                 Stop.IsEnabled = false;
             }
         }
+
+        private async void Stop_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _rotateFile.Stop();
+                // Add more stops
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            }
+        }
+
         private void LogMessage(string message)
         {
             Dispatcher.Invoke(() =>
