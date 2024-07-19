@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Windows;
 using trmua_utils.utils;
+using MessageBox = System.Windows.MessageBox;
 
 namespace trmua_utils
 {
@@ -14,7 +15,7 @@ namespace trmua_utils
             InitializeComponent();
             LoadSettings();
             _rotateFile = new RotateFile();
-            _rotateFile.LogMessage += LogMessage;
+            //_rotateFile.LogMessage += LogMessage;
         }
 
       
