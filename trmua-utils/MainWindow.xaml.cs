@@ -162,6 +162,7 @@ namespace trmua_utils
             }
             UpdateStopButtonState();
         }
+
         private void UpdateStopButtonState()
         {
             Stop.IsEnabled = _isRotating || _isRemovingThumbs;
