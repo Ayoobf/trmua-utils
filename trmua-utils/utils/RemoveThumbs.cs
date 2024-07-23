@@ -13,17 +13,30 @@ namespace trmua_utils.utils
         public async Task RemoveThumbsAsync(string folderName, IProgress<int> progress, Dispatcher dispatcher)
         {
             _cts = new CancellationTokenSource();
+            List<string> matchingFiles;
             try
             {
                 await dispatcher.InvokeAsync(() =>
                 {
-                    var mapsInDir = Directory.GetFiles(folderName);
+                    var maps = Directory.GetFiles(folderName);
                     Regex? re = new Regex(strRegex);
-                    foreach (var map in mapsInDir)
+
+                    matchingFiles = maps.Where(map => re.IsMatch(map)).ToList();
+
+                    if (matchingFiles.Count == 0)
+                    {
+                        LogMessage?.Invoke($"No maps found");
+                        return;
+                    }
+
+                    LogMessage?.Invoke($"Found {matchingFiles.Count} files matching the criteria");
+
+                    foreach (var map in matchingFiles)
                     {
                         if (re.IsMatch(map))
                         {
                             File.Delete(map);
+                            LogMessage?.Invoke($"deleted {map}");
                         }
 
                     }
@@ -36,7 +49,7 @@ namespace trmua_utils.utils
 
 
         }
-        public void Stop() => _cts.Cancel();
+        public void Stop() => _cts?.Cancel();
 
 
     }

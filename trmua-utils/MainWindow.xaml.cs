@@ -17,7 +17,8 @@ namespace trmua_utils
             LoadSettings();
             _rotateFile = new RotateFile();
             _removeThumbs = new RemoveThumbs();
-            //_rotateFile.LogMessage += LogMessage;
+            _rotateFile.LogMessage += LogMessage;
+            _removeThumbs.LogMessage += LogMessage;
         }
 
 
@@ -102,7 +103,7 @@ namespace trmua_utils
             }
         }
 
-        private async void Stop_Click(object sender, RoutedEventArgs e)
+        private void Stop_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -131,12 +132,14 @@ namespace trmua_utils
                 MessageBox.Show("Please Select a folder first. ", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
+
             rotate.IsEnabled = false;
             Stop.IsEnabled = true;
             var progress = new Progress<int>(value =>
             {
                 // Update progress bar if you add one
             });
+
             try
             {
                 await _removeThumbs.RemoveThumbsAsync(thumbsFolderPath.Text, progress, Dispatcher);
