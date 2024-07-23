@@ -25,7 +25,7 @@ namespace trmua_utils
             UpdateStopButtonState();
         }
 
-
+        // Loads the settings from memory
         private void LoadSettings()
         {
             if (Properties.Settings.Default.ThumbsFolderPath != null)
@@ -34,6 +34,8 @@ namespace trmua_utils
                 rotateFolderPath.Text = Properties.Settings.Default.RotateFolderPath;
             }
         }
+
+        // Saves folder path needed in order for "remove thumbs" to work
         private void SaveFolderPathThumbs(string folderPath)
         {
             try
@@ -47,6 +49,8 @@ namespace trmua_utils
                 MessageBox.Show($"Error saving settings: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        // Button behavior for Saving the folder path on the second page of the application 
         private void ThumbsFolder_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFolderDialog();
@@ -56,6 +60,7 @@ namespace trmua_utils
             }
         }
 
+        // Saves folder path needed in order for "rotate folder" to work
         private void SaveFolderPathRotate(string folderPath)
         {
             try
@@ -69,6 +74,8 @@ namespace trmua_utils
                 MessageBox.Show($"Error saving settings: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        // Button behavior for Saving the folder path on the second page of the application 
         private void RotateFolder_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFolderDialog();
@@ -78,6 +85,7 @@ namespace trmua_utils
             }
         }
 
+        // Button behavior for running the rotate file button
         private async void RotateFile_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(rotateFolderPath.Text))
@@ -132,6 +140,7 @@ namespace trmua_utils
             }
         }
 
+        // Helper method for pushing log messages
         private void LogMessage(string message)
         {
             Dispatcher.Invoke(() =>
@@ -140,6 +149,7 @@ namespace trmua_utils
             });
         }
 
+        // Button behavior for running the "remove thumbs util"
         private void removeThumbs_Click(object sender, RoutedEventArgs e)
         {
             if (String.IsNullOrWhiteSpace(thumbsFolderPath.Text))
@@ -162,6 +172,7 @@ namespace trmua_utils
             }
             UpdateStopButtonState();
         }
+
         private void UpdateStopButtonState()
         {
             Stop.IsEnabled = _isRotating || _isRemovingThumbs;
