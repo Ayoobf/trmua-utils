@@ -33,11 +33,13 @@
                 <Label Grid.Row="2" FontSize="14" Margin="5 0 5 0">Logs:</Label>
 
                 <Border Grid.Row="3" Margin="5" BorderThickness="1" BorderBrush="Gray">
-                    <TextBlock Name="outputTextBlock" Background="#E8E9EB" Padding="5" TextWrapping="Wrap" VerticalAlignment="Stretch"/>
+                    <ScrollViewer>
+                        <TextBlock Name="outputTextBlock" Background="#E8E9EB" Padding="5" TextWrapping="Wrap" VerticalAlignment="Stretch"/>
+                    </ScrollViewer>
                 </Border>
 
                 <Button Grid.Row="4" Name="Stop" Height="25" Margin="5 10" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" Width="200" Click="Stop_Click">Stop</Button>
-            </Grid>
+             </Grid>
         </TabItem>
         <TabItem Header="Settings" Height="22" Margin="-2,0,-2,0" VerticalAlignment="Bottom">
             <StackPanel>

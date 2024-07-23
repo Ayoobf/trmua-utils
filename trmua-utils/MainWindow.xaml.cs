@@ -11,6 +11,9 @@ namespace trmua_utils
     {
         private RotateFile _rotateFile;
         private RemoveThumbs _removeThumbs;
+        private bool _isRemovingThumbs = false;
+        private bool _isRotating = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -19,6 +22,7 @@ namespace trmua_utils
             _removeThumbs = new RemoveThumbs();
             _rotateFile.LogMessage += LogMessage;
             _removeThumbs.LogMessage += LogMessage;
+            UpdateStopButtonState();
         }
 
 
@@ -82,7 +86,8 @@ namespace trmua_utils
                 return;
             }
             rotate.IsEnabled = false;
-            Stop.IsEnabled = true;
+            _isRotating = true;
+            UpdateStopButtonState();
             var progress = new Progress<int>(value =>
             {
                 // Update progress bar if you add one
@@ -99,7 +104,8 @@ namespace trmua_utils
             finally
             {
                 rotate.IsEnabled = true;
-                Stop.IsEnabled = false;
+                _isRotating = false;
+                UpdateStopButtonState();
             }
         }
 
@@ -107,13 +113,22 @@ namespace trmua_utils
         {
             try
             {
-                _rotateFile.Stop();
-                // Add more stops
+                if (_isRotating)
+                {
+                    _rotateFile.Stop();
+                    _isRotating = false;
+                }
+                if (_isRemovingThumbs)
+                {
+                    _removeThumbs.Stop();
+                    removeThumbs.Content = "Remove Thumbs";
+                    _isRemovingThumbs = false;
+                }
+                UpdateStopButtonState();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
             }
         }
 
@@ -125,34 +140,31 @@ namespace trmua_utils
             });
         }
 
-        private async void removeThumbs_Click(object sender, RoutedEventArgs e)
+        private void removeThumbs_Click(object sender, RoutedEventArgs e)
         {
             if (String.IsNullOrWhiteSpace(thumbsFolderPath.Text))
             {
-                MessageBox.Show("Please Select a folder first. ", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Please select a folder first.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            rotate.IsEnabled = false;
-            Stop.IsEnabled = true;
-            var progress = new Progress<int>(value =>
+            if (_isRemovingThumbs)
             {
-                // Update progress bar if you add one
-            });
-
-            try
-            {
-                await _removeThumbs.RemoveThumbsAsync(thumbsFolderPath.Text, progress, Dispatcher);
+                _removeThumbs.Stop();
+                removeThumbs.Content = "Remove Thumbs";
+                _isRemovingThumbs = false;
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _removeThumbs.StartRemovingThumbs(thumbsFolderPath.Text, Dispatcher);
+                removeThumbs.Content = "Stop Removing Thumbs";
+                _isRemovingThumbs = true;
             }
-            finally
-            {
-                rotate.IsEnabled = true;
-                Stop.IsEnabled = false;
-            }
+            UpdateStopButtonState();
+        }
+        private void UpdateStopButtonState()
+        {
+            Stop.IsEnabled = _isRotating || _isRemovingThumbs;
         }
     }
 }
