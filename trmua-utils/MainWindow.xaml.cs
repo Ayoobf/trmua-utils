@@ -23,6 +23,8 @@ namespace trmua_utils
             _rotateFile.LogMessage += LogMessage;
             _removeThumbs.LogMessage += LogMessage;
             UpdateStopButtonState();
+            Top = 500;
+            Left = 1100;
         }
 
         // Loads the settings from memory
@@ -176,6 +178,12 @@ namespace trmua_utils
         private void UpdateStopButtonState()
         {
             Stop.IsEnabled = _isRotating || _isRemovingThumbs;
+        }
+
+        private void Window_PreviewLostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        {
+            var window = (Window)sender;
+            window.Topmost = true;
         }
     }
 }
