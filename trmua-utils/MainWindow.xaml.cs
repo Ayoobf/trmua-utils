@@ -194,7 +194,7 @@ namespace trmua_utils
                 refresh.IsEnabled = false;
                 _isRefreshing = true;
                 UpdateStopButtonState();
-                await _refresh.RefreshAsync("TEst", Dispatcher);
+                await _refresh.RefreshAsync("HPSCANNER", Dispatcher);
                 
             }
             catch (Exception ex)
