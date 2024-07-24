@@ -6,34 +6,20 @@ namespace trmua_utils.utils
     {
         private CancellationTokenSource? _cts;
         public event Action<string>? LogMessage;
-        private bool _exitLoop = false;
+        private const int DelayMs = 5000;
 
         public async Task RefreshAsync(string TargetApplication, Dispatcher dispatcher)
         {
             _cts = new CancellationTokenSource();
             int delay = 5000;
-            _exitLoop = false;
             try
             {
-
-                LogMessage.Invoke($"Refresh started, refreshing window every {delay / 1000}");
-                while (true)
+                LogMessage?.Invoke($"Refresh started, refreshing window every {DelayMs / 1000} seconds");
+                while (!_cts.Token.IsCancellationRequested)
                 {
-                    if (_exitLoop || _cts.IsCancellationRequested)
-                    {
-                        LogMessage.Invoke($"Operation cancelled");
-                        break;
-                    }
-
-                    await dispatcher.InvokeAsync(() =>
-                    {
-                        Thread.Sleep(1000);
-                        LogMessage.Invoke($"Refreshed: {DateTime.Now}");
-                        SendKeys.SendWait("^r");
-                    });
-                    await Task.Delay(delay);
+                    await RefreshActionAsync(dispatcher);
+                    await Task.Delay(DelayMs, _cts.Token);
                 }
-
 
             }
             catch (OperationCanceledException)
@@ -44,13 +30,24 @@ namespace trmua_utils.utils
             {
                 LogMessage.Invoke($"{ex}");
             }
+            finally
+            {
+                LogMessage?.Invoke("Refresh operation stopped");
+            }
         }
-
+        private async Task RefreshActionAsync(Dispatcher dispatcher)
+        {
+            await dispatcher.InvokeAsync(() =>
+            {
+                Thread.Sleep(1000);
+                LogMessage?.Invoke($"Refreshed: {DateTime.Now}");
+                SendKeys.SendWait("^r");
+            });
+        }
 
         public void Stop()
         {
             _cts.Cancel();
-            _exitLoop = true;
         }
     }
 }
