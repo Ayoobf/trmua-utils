@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.Configuration;
 using System.Windows;
+using System.Windows.Controls;
 using trmua_utils.utils;
 using MessageBox = System.Windows.MessageBox;
 
