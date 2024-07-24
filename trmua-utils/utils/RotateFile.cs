@@ -1,16 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.IO;
 using System.Windows.Threading;
 
 namespace trmua_utils.utils
 {
     public class RotateFile
     {
-        private CancellationTokenSource _cts;
-        public event Action<string> LogMessage;
+        private CancellationTokenSource? _cts;
+        public event Action<string>? LogMessage;
         private bool _exitLoop = false;
 
         public async Task RotateFilesAsync(string folderPath, int subfolderToBeLeftOut, IProgress<int> progress, Dispatcher dispatcher)
