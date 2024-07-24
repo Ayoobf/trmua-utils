@@ -27,6 +27,8 @@ namespace trmua_utils
             _removeThumbs.LogMessage += LogMessage;
             _refresh.LogMessage += LogMessage;
             UpdateStopButtonState();
+            Top = 500;
+            Left = 1100;
         }
 
         // Loads the settings from memory
@@ -208,6 +210,12 @@ namespace trmua_utils
                 UpdateStopButtonState();
             }
 
+        }
+
+        private void Window_PreviewLostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        {
+            var window = (Window)sender;
+            window.Topmost = true;
         }
     }
 }
