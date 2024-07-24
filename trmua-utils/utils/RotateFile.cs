@@ -39,11 +39,13 @@ namespace trmua_utils.utils
                         Thread.Sleep(1000);
                         SendKeys.SendWait("^."); // Ctrl + .
                         Thread.Sleep(1000); // Short delay after rotation command
-                        SendKeys.SendWait("{LEFT}"); // Left arrow
+                        SendKeys.SendWait("{RIGHT}"); // Right arrow
                     });
 
-                    // Wait for file to be modified
-                    await WaitForFileSaveAsync(currentFile);
+                    // Wait for a fixed amount of time
+                    await Task.Delay(7000); // Wait for 7 seconds
+
+                    LogMessage?.Invoke($"Finished processing: {Path.GetFileName(currentFile)}");
 
                     progress?.Report((i + 1) * 100 / numOfFiles);
                 }
@@ -58,41 +60,6 @@ namespace trmua_utils.utils
             {
                 LogMessage?.Invoke($"Error: {ex.Message}");
             }
-        }
-
-        // TODO: add better file change detection
-        private async Task WaitForFileSaveAsync(string filePath)
-        {
-            DateTime startTime = DateTime.Now;
-            FileInfo fileInfo = new FileInfo(filePath);
-            DateTime lastWriteTime = fileInfo.LastWriteTime;
-            long lastFileSize = fileInfo.Length;
-
-            while (true)
-            {
-                if (_exitLoop || _cts.Token.IsCancellationRequested)
-                {
-                    break;
-                }
-
-                await Task.Delay(500); // Check every 500ms
-
-                fileInfo.Refresh();
-                if (fileInfo.LastWriteTime != lastWriteTime || fileInfo.Length != lastFileSize)
-                {
-                    LogMessage?.Invoke($"File saved: {Path.GetFileName(filePath)}");
-                    break;
-                }
-
-                if ((DateTime.Now - startTime).TotalSeconds > 20) // Maximum wait time of 20 seconds
-                {
-                    LogMessage?.Invoke($"Timeout waiting for file save: {Path.GetFileName(filePath)}");
-                    break;
-                }
-            }
-
-            // Additional delay to ensure file is completely saved
-            await Task.Delay(1000);
         }
 
         public void Stop()
