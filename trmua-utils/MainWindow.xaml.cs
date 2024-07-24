@@ -103,7 +103,7 @@ namespace trmua_utils
 
             try
             {
-                await _rotateFile.RotateFilesAsync(rotateFolderPath.Text, 1, progress, Dispatcher);
+                await _rotateFile.RotateFilesAsync(rotateFolderPath.Text, 2, progress, Dispatcher);
             }
             catch (Exception ex)
             {
