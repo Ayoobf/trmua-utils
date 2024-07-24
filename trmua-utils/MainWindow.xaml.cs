@@ -11,6 +11,7 @@ namespace trmua_utils
     {
         private RotateFile _rotateFile;
         private RemoveThumbs _removeThumbs;
+        private Refresh _refresh;
         private bool _isRemovingThumbs = false;
         private bool _isRotating = false;
 
@@ -20,8 +21,10 @@ namespace trmua_utils
             LoadSettings();
             _rotateFile = new RotateFile();
             _removeThumbs = new RemoveThumbs();
+            _refresh = new Refresh();
             _rotateFile.LogMessage += LogMessage;
             _removeThumbs.LogMessage += LogMessage;
+            _refresh.LogMessage += LogMessage;
             UpdateStopButtonState();
         }
 
@@ -150,7 +153,7 @@ namespace trmua_utils
         }
 
         // Button behavior for running the "remove thumbs util"
-        private void removeThumbs_Click(object sender, RoutedEventArgs e)
+        private void RemoveThumbs_Click(object sender, RoutedEventArgs e)
         {
             if (String.IsNullOrWhiteSpace(thumbsFolderPath.Text))
             {
@@ -176,6 +179,19 @@ namespace trmua_utils
         private void UpdateStopButtonState()
         {
             Stop.IsEnabled = _isRotating || _isRemovingThumbs;
+        }
+
+        private async void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                await _refresh.RefreshAsync("TEst", Dispatcher);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            }
         }
     }
 }
