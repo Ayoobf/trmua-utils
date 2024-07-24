@@ -14,6 +14,7 @@ namespace trmua_utils
         private Refresh _refresh;
         private bool _isRemovingThumbs = false;
         private bool _isRotating = false;
+        private bool _isRefreshing = false;
 
         public MainWindow()
         {
@@ -135,6 +136,11 @@ namespace trmua_utils
                     removeThumbs.Content = "Remove Thumbs";
                     _isRemovingThumbs = false;
                 }
+                if (_isRefreshing)
+                {
+                    _refresh.Stop();
+                    _isRefreshing = false;
+                }
                 UpdateStopButtonState();
             }
             catch (Exception ex)
@@ -178,20 +184,30 @@ namespace trmua_utils
 
         private void UpdateStopButtonState()
         {
-            Stop.IsEnabled = _isRotating || _isRemovingThumbs;
+            Stop.IsEnabled = _isRotating || _isRemovingThumbs || _isRefreshing;
         }
 
         private async void Refresh_Click(object sender, RoutedEventArgs e)
         {
             try
             {
+                refresh.IsEnabled = false;
+                _isRefreshing = true;
+                UpdateStopButtonState();
                 await _refresh.RefreshAsync("TEst", Dispatcher);
+                
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
             }
+            finally
+            {
+                refresh.IsEnabled = true;
+                _isRefreshing = false;
+                UpdateStopButtonState();
+            }
+
         }
     }
 }
