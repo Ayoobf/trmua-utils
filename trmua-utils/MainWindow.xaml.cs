@@ -10,9 +10,9 @@ namespace trmua_utils
 
     public partial class MainWindow : Window
     {
-        private RotateFile _rotateFile;
-        private RemoveThumbs _removeThumbs;
-        private Refresh _refresh;
+        private readonly RotateFile _rotateFile;
+        private readonly RemoveThumbs _removeThumbs;
+        private readonly Refresh _refresh;
         private bool _isRemovingThumbs = false;
         private bool _isRotating = false;
         private bool _isRefreshing = false;
@@ -142,7 +142,7 @@ namespace trmua_utils
 
             try
             {
-                await _rotateFile.RotateFilesAsync(rotateFolderPath.Text, 2, progress, Dispatcher);
+                await _rotateFile.RotateFilesAsync("Windows Photo Viewer",rotateFolderPath.Text, 2, progress, Dispatcher);
             }
             catch (Exception ex)
             {
@@ -182,15 +182,6 @@ namespace trmua_utils
             {
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-
-        // Helper method for pushing log messages
-        private void LogMessage(string message)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                outputTextBlock.Text += message + Environment.NewLine;
-            });
         }
 
         // Button behavior for running the "remove thumbs util"
