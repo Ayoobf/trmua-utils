@@ -137,7 +137,7 @@ namespace trmua_utils
             UpdateStopButtonState();
             var progress = new Progress<int>(value =>
             {
-                // Update progress bar if you add one
+                ProgressBar.Value = value;
             });
 
             try
@@ -234,6 +234,14 @@ namespace trmua_utils
                 UpdateStopButtonState();
             }
 
+        }
+
+        private async void ClearLogs_Click(object sender, RoutedEventArgs e)
+        {
+            outputTextBlock.Text = string.Empty;
+            AddLog("Logs cleared.");
+            await Task.Delay(2000);
+            outputTextBlock.Text = string.Empty;
         }
 
         private void Window_PreviewLostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)

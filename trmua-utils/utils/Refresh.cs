@@ -50,7 +50,7 @@ namespace trmua_utils.utils
                 if (hWnd != IntPtr.Zero)
                 {
                     SetForegroundWindow(hWnd);
-                    Thread.Sleep(100); // Give a moment for the window to come to the foreground
+                    Thread.Sleep(1000); // Give a moment for the window to come to the foreground
                     SendKeys.SendWait("^r");
                     LogMessage?.Invoke($"Refreshed: {DateTime.Now}");
                 }
