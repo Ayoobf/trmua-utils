@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.Configuration;
 using System.Windows;
+using System.Windows.Controls;
 using trmua_utils.utils;
 using MessageBox = System.Windows.MessageBox;
 
@@ -20,13 +21,47 @@ namespace trmua_utils
         {
             InitializeComponent();
             LoadSettings();
+            InitializeLogging();
+
             _rotateFile = new RotateFile();
             _removeThumbs = new RemoveThumbs();
             _refresh = new Refresh();
-            _rotateFile.LogMessage += LogMessage;
-            _removeThumbs.LogMessage += LogMessage;
-            _refresh.LogMessage += LogMessage;
+
+            _rotateFile.LogMessage += AddLogMessage;
+            _removeThumbs.LogMessage += AddLogMessage;
+            _refresh.LogMessage += AddLogMessage;
+
             UpdateStopButtonState();
+            Top = 500;
+            Left = 1100;
+
+            AddLog("Application initialized.");
+        }
+        private void InitializeLogging()
+        {
+            if (LogScrollViewer != null && outputTextBlock != null)
+            {
+                outputTextBlock.Text = string.Empty;
+                LogScrollViewer.ScrollToBottom();
+            }
+            else
+            {
+                MessageBox.Show("Logging controls not properly initialized.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void AddLog(string logMessage)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                outputTextBlock.Text += logMessage + Environment.NewLine;
+                outputTextBlock.UpdateLayout();
+                LogScrollViewer.ScrollToBottom();
+            });
+        }
+        private void AddLogMessage(string message)
+        {
+            Dispatcher.Invoke(() => AddLog(message));
         }
 
         // Loads the settings from memory
@@ -208,6 +243,12 @@ namespace trmua_utils
                 UpdateStopButtonState();
             }
 
+        }
+
+        private void Window_PreviewLostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        {
+            var window = (Window)sender;
+            window.Topmost = true;
         }
     }
 }
