@@ -49,8 +49,7 @@ namespace trmua_utils.utils
                         else
                         {
                             LogMessage?.Invoke($"Window '{targetApplication}' not found");
-                            LogMessage?.Invoke($"Cancelling Operation, Please open your image before running \"Rotate\"");
-                            _cts.Cancel();                        
+                            throw new OperationCanceledException("Please open your intended tiff before running \"Rotate\"");                       
                         }
 
                     });
