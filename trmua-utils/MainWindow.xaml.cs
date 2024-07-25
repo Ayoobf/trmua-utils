@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.Configuration;
 using System.Windows;
+using System.Windows.Controls;
 using trmua_utils.utils;
 using MessageBox = System.Windows.MessageBox;
 
@@ -9,16 +10,61 @@ namespace trmua_utils
 
     public partial class MainWindow : Window
     {
-        private RotateFile _rotateFile;
+        private readonly RotateFile _rotateFile;
+        private readonly RemoveThumbs _removeThumbs;
+        private readonly Refresh _refresh;
+        private bool _isRemovingThumbs = false;
+        private bool _isRotating = false;
+        private bool _isRefreshing = false;
+
         public MainWindow()
         {
             InitializeComponent();
             LoadSettings();
+            InitializeLogging();
+
             _rotateFile = new RotateFile();
-            //_rotateFile.LogMessage += LogMessage;
+            _removeThumbs = new RemoveThumbs();
+            _refresh = new Refresh();
+
+            _rotateFile.LogMessage += AddLogMessage;
+            _removeThumbs.LogMessage += AddLogMessage;
+            _refresh.LogMessage += AddLogMessage;
+
+            UpdateStopButtonState();
+            Top = 500;
+            Left = 1075;
+
+            AddLog("Application initialized.");
+        }
+        private void InitializeLogging()
+        {
+            if (LogScrollViewer != null && outputTextBlock != null)
+            {
+                outputTextBlock.Text = string.Empty;
+                LogScrollViewer.ScrollToBottom();
+            }
+            else
+            {
+                MessageBox.Show("Logging controls not properly initialized.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
-      
+        private void AddLog(string logMessage)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                outputTextBlock.Text += logMessage + Environment.NewLine;
+                outputTextBlock.UpdateLayout();
+                LogScrollViewer.ScrollToBottom();
+            });
+        }
+        private void AddLogMessage(string message)
+        {
+            Dispatcher.Invoke(() => AddLog(message));
+        }
+
+        // Loads the settings from memory
         private void LoadSettings()
         {
             if (Properties.Settings.Default.ThumbsFolderPath != null)
@@ -27,6 +73,8 @@ namespace trmua_utils
                 rotateFolderPath.Text = Properties.Settings.Default.RotateFolderPath;
             }
         }
+
+        // Saves folder path needed in order for "remove thumbs" to work
         private void SaveFolderPathThumbs(string folderPath)
         {
             try
@@ -40,6 +88,8 @@ namespace trmua_utils
                 MessageBox.Show($"Error saving settings: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        // Button behavior for Saving the folder path on the second page of the application 
         private void ThumbsFolder_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFolderDialog();
@@ -49,6 +99,7 @@ namespace trmua_utils
             }
         }
 
+        // Saves folder path needed in order for "rotate folder" to work
         private void SaveFolderPathRotate(string folderPath)
         {
             try
@@ -62,6 +113,8 @@ namespace trmua_utils
                 MessageBox.Show($"Error saving settings: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        // Button behavior for Saving the folder path on the second page of the application 
         private void RotateFolder_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFolderDialog();
@@ -71,6 +124,7 @@ namespace trmua_utils
             }
         }
 
+        // Button behavior for running the rotate file button
         private async void RotateFile_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(rotateFolderPath.Text))
@@ -79,15 +133,16 @@ namespace trmua_utils
                 return;
             }
             rotate.IsEnabled = false;
-            Stop.IsEnabled = true;
+            _isRotating = true;
+            UpdateStopButtonState();
             var progress = new Progress<int>(value =>
             {
-                // Update progress bar if you add one
+                ProgressBar.Value = value;
             });
 
             try
             {
-                await _rotateFile.RotateFilesAsync(rotateFolderPath.Text, 1, progress, Dispatcher);
+                await _rotateFile.RotateFilesAsync("Windows Photo Viewer",rotateFolderPath.Text, 2, progress, Dispatcher);
             }
             catch (Exception ex)
             {
@@ -96,15 +151,103 @@ namespace trmua_utils
             finally
             {
                 rotate.IsEnabled = true;
-                Stop.IsEnabled = false;
+                _isRotating = false;
+                UpdateStopButtonState();
             }
         }
-        private void LogMessage(string message)
+
+        private void Stop_Click(object sender, RoutedEventArgs e)
         {
-            Dispatcher.Invoke(() =>
+            try
             {
-                outputTextBlock.Text += message + Environment.NewLine;
-            });
+                if (_isRotating)
+                {
+                    _rotateFile.Stop();
+                    _isRotating = false;
+                }
+                if (_isRemovingThumbs)
+                {
+                    _removeThumbs.Stop();
+                    removeThumbs.Content = "Remove Thumbs";
+                    _isRemovingThumbs = false;
+                }
+                if (_isRefreshing)
+                {
+                    _refresh.Stop();
+                    _isRefreshing = false;
+                }
+                UpdateStopButtonState();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // Button behavior for running the "remove thumbs util"
+        private void RemoveThumbs_Click(object sender, RoutedEventArgs e)
+        {
+            if (String.IsNullOrWhiteSpace(thumbsFolderPath.Text))
+            {
+                MessageBox.Show("Please select a folder first.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (_isRemovingThumbs)
+            {
+                _removeThumbs.Stop();
+                removeThumbs.Content = "Remove Thumbs";
+                _isRemovingThumbs = false;
+            }
+            else
+            {
+                _removeThumbs.StartRemovingThumbs(thumbsFolderPath.Text, Dispatcher);
+                removeThumbs.Content = "Stop Removing Thumbs";
+                _isRemovingThumbs = true;
+            }
+            UpdateStopButtonState();
+        }
+
+        private void UpdateStopButtonState()
+        {
+            Stop.IsEnabled = _isRotating || _isRemovingThumbs || _isRefreshing;
+        }
+
+        private async void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                refresh.IsEnabled = false;
+                _isRefreshing = true;
+                UpdateStopButtonState();
+                await _refresh.RefreshAsync("HPSCANNER", Dispatcher);
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                refresh.IsEnabled = true;
+                _isRefreshing = false;
+                UpdateStopButtonState();
+            }
+
+        }
+
+        private async void ClearLogs_Click(object sender, RoutedEventArgs e)
+        {
+            outputTextBlock.Text = string.Empty;
+            AddLog("Logs cleared.");
+            await Task.Delay(2000);
+            outputTextBlock.Text = string.Empty;
+        }
+
+        private void Window_PreviewLostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        {
+            var window = (Window)sender;
+            window.Topmost = true;
         }
     }
 }

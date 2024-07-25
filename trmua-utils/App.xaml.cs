@@ -1,6 +1,4 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
+﻿using System.Windows;
 using Application = System.Windows.Application;
 
 namespace trmua_utils
@@ -10,6 +8,11 @@ namespace trmua_utils
     /// </summary>
     public partial class App : Application
     {
+        private void Window_Deactivated(object sender, EventArgs e)
+        {
+            Window window = (Window)sender;
+            window.Topmost = true;
+        }
     }
 
 }

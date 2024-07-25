@@ -1,74 +1,83 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows.Threading;
-using System.Windows.Forms;
 
 namespace trmua_utils.utils
 {
     public class RotateFile
     {
-        private CancellationTokenSource _cts;
-        public event Action<string> LogMessage;
+        private CancellationTokenSource? _cts;
+        public event Action<string>? LogMessage;
+        private bool _exitLoop = false;
 
-        public async Task RotateFilesAsync(string folderPath, int subfolderToBeLeftOut, IProgress<int> progress, Dispatcher dispatcher)
+        [DllImport("user32.dll")]
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+
+        public async Task RotateFilesAsync(string targetApplication, string folderPath, int subfolderToBeLeftOut, IProgress<int> progress, Dispatcher dispatcher)
         {
             _cts = new CancellationTokenSource();
+            _exitLoop = false;
             try
             {
-                //LogMessage?.Invoke($"Starting rotation in folder: {folderPath}");
                 var files = Directory.GetFiles(folderPath);
                 int numOfFiles = files.Length - subfolderToBeLeftOut;
-                //LogMessage?.Invoke($"Found {numOfFiles} files to rotate");
+                LogMessage?.Invoke($"Found {numOfFiles} files to rotate");
 
                 for (int i = 0; i < numOfFiles; i++)
                 {
-                    if (_cts.Token.IsCancellationRequested)
+                    if (_exitLoop || _cts.Token.IsCancellationRequested)
                     {
-                        //LogMessage?.Invoke("Operation cancelled");
+                        LogMessage?.Invoke("Operation cancelled");
                         break;
                     }
 
-                    //LogMessage?.Invoke($"Rotating file {i + 1} of {numOfFiles}");
-
-                    // Simulate key presses on the UI thread
+                    string currentFile = files[i];
+                    LogMessage?.Invoke($"Rotating file {i + 1} of {numOfFiles}: {Path.GetFileName(currentFile)}");
+                    
                     await dispatcher.InvokeAsync(() =>
                     {
-                        Thread.Sleep(2000);
-                        //LogMessage?.Invoke("waiting 2 seconds");
-                        SimulateKeyPress("^.");
-                        //LogMessage?.Invoke("Pressed: Ctrl + .");
-                        Thread.Sleep(500);
-                        //LogMessage?.Invoke("waiting 3 seconds");
-                        SimulateKeyPress("{LEFT}");
-                        //LogMessage?.Invoke("Pressed: Left Arrow");
-                        Thread.Sleep(4000);
+                        IntPtr hWnd = WindowFinder.FindWindowByTitle(targetApplication);
+                        if (hWnd != IntPtr.Zero)
+                        {
+                            SetForegroundWindow(hWnd);
+                            Thread.Sleep(1000);
+                            SendKeys.SendWait("^."); // Ctrl + .
+                            Thread.Sleep(1000); // Short delay after rotation command
+                            SendKeys.SendWait("{RIGHT}"); // Right arrow
+                        }
+                        else
+                        {
+                            LogMessage?.Invoke($"Window '{targetApplication}' not found");
+                            throw new OperationCanceledException("Please open your intended tiff before running \"Rotate\"");                       
+                        }
+
                     });
+
+                    // Wait for a fixed amount of time
+                    await Task.Delay(7000); // Wait for 7 seconds
+
+                    LogMessage?.Invoke($"Finished processing: {Path.GetFileName(currentFile)}");
 
                     progress?.Report((i + 1) * 100 / numOfFiles);
                 }
 
-                //LogMessage?.Invoke("Rotation completed");
+                LogMessage?.Invoke("Rotation completed");
             }
             catch (OperationCanceledException)
             {
-                //LogMessage?.Invoke("Operation cancelled");
+                LogMessage?.Invoke("Operation cancelled");
             }
             catch (Exception ex)
             {
-                //LogMessage?.Invoke($"Error: {ex.Message}");
+                LogMessage?.Invoke($"Error: {ex.Message}");
             }
         }
 
         public void Stop()
         {
+            _exitLoop = true;
             _cts?.Cancel();
-        }
-
-        private void SimulateKeyPress(string keys)
-        {
-            SendKeys.SendWait(keys);
         }
     }
 }
