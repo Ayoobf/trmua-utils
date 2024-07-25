@@ -33,7 +33,7 @@ namespace trmua_utils
 
             UpdateStopButtonState();
             Top = 500;
-            Left = 1100;
+            Left = 1075;
 
             AddLog("Application initialized.");
         }
