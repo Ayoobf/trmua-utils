@@ -29,9 +29,9 @@
                     </Grid.ColumnDefinitions>
 
 
-                    <Button Grid.Column="0" Name="rotate" IsEnabled="True" Height="34" Margin="0 0 5 0" FontSize="12" Click="RotateFile_Click" ToolTip="Rotates current image. Must have target photo open.Must have target folder specified in the settings.">Rotate</Button>
-                    <Button Grid.Column="1" Name="removeThumbs" IsEnabled="True" Height="34" Margin="5 0 5 0" FontSize="12" Click="RemoveThumbs_Click" ToolTip="Batch removes all files with the .thumb extention in a given folder.Must have target folder specified in the settings.">Remove Thumbs</Button>
-                    <Button Grid.Column="2" Name="refresh" IsEnabled="True" Height="34" Margin="5 0 0 0" FontSize="12" Click="Refresh_Click">Refresh</Button>
+                    <Button Grid.Column="0" Name="rotate" IsEnabled="True" Height="34" Margin="0 0 5 0" FontSize="12" Click="RotateFile_Click" ToolTip="Rotates current image. Must have target photo open. Must have target folder specified in the settings.">Rotate</Button>
+                    <Button Grid.Column="1" Name="removeThumbs" IsEnabled="True" Height="34" Margin="5 0 5 0" FontSize="12" Click="RemoveThumbs_Click" ToolTip="Batch removes all files with the .thumb extention in a given folder. Must have target folder specified in the settings.">Remove Thumbs</Button>
+                    <Button Grid.Column="2" Name="refresh" IsEnabled="True" Height="34" Margin="5 0 0 0" FontSize="12" Click="Refresh_Click" ToolTip="Refreshes a target folder for changes. Mainly used to refresh the maps folder when new mapsgo in it to see changes.">Refresh</Button>
 
 
                 </Grid>
