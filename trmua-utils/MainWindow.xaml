@@ -39,8 +39,7 @@
                 <Label Grid.Row="2" FontSize="14" Margin="5,5,5,0">Logs:</Label>
 
                 <Border Grid.Row="3" Margin="5,5,5,5" BorderThickness="1" BorderBrush="Gray" Grid.ColumnSpan="2">
-                    <ScrollViewer VerticalScrollBarVisibility="Visible" CanContentScroll="True" PanningMode="VerticalFirst" >
-
+                    <ScrollViewer Name="LogScrollViewer" VerticalScrollBarVisibility="Visible" CanContentScroll="True" PanningMode="VerticalFirst">
                         <TextBlock Name="outputTextBlock" Background="#E8E9EB" Padding="5" TextWrapping="Wrap" VerticalAlignment="Stretch"/>
                     </ScrollViewer>
                 </Border>
