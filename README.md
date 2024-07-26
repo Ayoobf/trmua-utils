@@ -2,6 +2,8 @@
 
 A utility application for working with trmua files and thier respective workflow.
 
+<img width="381" alt="image" src="https://github.com/user-attachments/assets/9514538a-aea9-4c26-a4c0-3ee57eb09584">
+
 ## Latest Release
 
 [Download the latest version here](https://github.com/ayoobf/trmua-utils/releases/latest)
