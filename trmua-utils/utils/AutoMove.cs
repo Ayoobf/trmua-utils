@@ -25,7 +25,7 @@ namespace trmua_utils.utils
             }
             catch (Exception ex)
             {
-            
+                LogMessage?.Invoke($"{ex}");
             }
         }
 
@@ -51,20 +51,25 @@ namespace trmua_utils.utils
                         .OrderByDescending(file => file.LastWriteTime)
                         .Take(100)
                         .ToList();
+
                     if (matchingFiles.Count is 0)
                     {
                         LogMessage?.Invoke($"found no files in {directory}. Cancelling operation");
                         _cts?.Cancel();
+                        return;
                     }
-                    LogMessage?.Invoke($"found {matchingFiles.Count} files in {directory}");
 
+
+                    LogMessage?.Invoke($"found {matchingFiles.Count} files in {directory}");
                     foreach (var file in matchingFiles)
                     {
                         file.MoveTo(destinationFolder);
                         LogMessage?.Invoke($"moved {file.FullName} to {destinationFolder} ");
                     }
-
-
+                }
+                catch (OperationCanceledException)
+                {
+                    LogMessage?.Invoke($"operation stoppped");
                 }
                 catch (Exception e)
                 {
