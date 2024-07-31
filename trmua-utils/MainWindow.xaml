@@ -71,6 +71,17 @@
                     <TextBox Name="rotateFolderPath" Width="200" Margin="5,0" Text="Please select a folder" IsEnabled="False" />
                     <Button Name="Rotate" Content="Browse..." Width="75" Click="RotateFolder_Click" ToolTip="Target folder where main tiff files go. Usually the ScanApplications folder."/>
                 </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <Label>Auto Move Target:</Label>
+                    <TextBox Name="autoMoveTargetFolderPath" Width="200" Margin="5,0" Text="Please select a folder" IsEnabled="False" />
+                    <Button Name="AutoMoveTargetBT" Content="Browse..." Width="75" Click="AutoMoveTarget_Click" ToolTip="Target folder where done files lie before going into ToBeReviewed. Usually the ScanApplications folder."/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <Label>Auto Move Destination:</Label>
+                    <TextBox Name="autoMoveDestinationFolderPath" Width="200" Margin="5,0" Text="Please select a folder" IsEnabled="False" />
+                    <Button Name="AutoMoveDestinationBT" Content="Browse..." Width="75" Click="AutoMoveDestination_Click" ToolTip="Destination folder where done tiff files go. Usually the ToBeReviewed folder."/>
+                </StackPanel>
+
             </StackPanel>
         </TabItem>
     </TabControl>

@@ -13,6 +13,7 @@ namespace trmua_utils
         private readonly RotateFile _rotateFile;
         private readonly RemoveThumbs _removeThumbs;
         private readonly Refresh _refresh;
+        private readonly AutoMove _autoMove;
         private bool _isRemovingThumbs = false;
         private bool _isRotating = false;
         private bool _isRefreshing = false;
@@ -26,10 +27,13 @@ namespace trmua_utils
             _rotateFile = new RotateFile();
             _removeThumbs = new RemoveThumbs();
             _refresh = new Refresh();
+            _autoMove = new AutoMove();
 
             _rotateFile.LogMessage += AddLogMessage;
             _removeThumbs.LogMessage += AddLogMessage;
             _refresh.LogMessage += AddLogMessage;
+            _autoMove.LogMessage += AddLogMessage;
+
 
             UpdateStopButtonState();
             Top = 500;
@@ -71,6 +75,8 @@ namespace trmua_utils
             {
                 thumbsFolderPath.Text = Properties.Settings.Default.ThumbsFolderPath;
                 rotateFolderPath.Text = Properties.Settings.Default.RotateFolderPath;
+                autoMoveTargetFolderPath.Text = Properties.Settings.Default.AutoMoveTargetFolderPath;
+                autoMoveDestinationFolderPath.Text = Properties.Settings.Default.AutoMoveDestinationFolderPath;
             }
         }
 
@@ -121,6 +127,54 @@ namespace trmua_utils
             if (dialog.ShowDialog() == true)
             {
                 SaveFolderPathRotate(dialog.FolderName);
+            }
+        }
+
+        private void SaveFolderPathAutoMoveTarget(string folderPath)
+        {
+            try
+            {
+                Properties.Settings.Default.AutoMoveTargetFolderPath = folderPath;
+                Properties.Settings.Default.Save();
+                autoMoveTargetFolderPath.Text = folderPath;
+            }
+            catch (ConfigurationErrorsException ex)
+            {
+                MessageBox.Show($"Error saving settings: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // Button behavior for Saving the folder path on the second page of the application 
+        private void AutoMoveTarget_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFolderDialog();
+            if (dialog.ShowDialog() == true)
+            {
+                SaveFolderPathAutoMoveTarget(dialog.FolderName);
+            }
+        }
+
+        private void SaveFolderPathAutoMoveDestination(string folderPath)
+        {
+            try
+            {
+                Properties.Settings.Default.AutoMoveDestinationFolderPath = folderPath;
+                Properties.Settings.Default.Save();
+                autoMoveDestinationFolderPath.Text = folderPath;
+            }
+            catch (ConfigurationErrorsException ex)
+            {
+                MessageBox.Show($"Error saving settings: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // Button behavior for Saving the folder path on the second page of the application 
+        private void AutoMoveDestination_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFolderDialog();
+            if (dialog.ShowDialog() == true)
+            {
+                SaveFolderPathAutoMoveDestination(dialog.FolderName);
             }
         }
 

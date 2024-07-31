@@ -25,7 +25,7 @@ namespace trmua_utils.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("null")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string ThumbsFolderPath {
             get {
                 return ((string)(this["ThumbsFolderPath"]));
@@ -44,6 +44,30 @@ namespace trmua_utils.Properties {
             }
             set {
                 this["RotateFolderPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AutoMoveTargetFolderPath {
+            get {
+                return ((string)(this["AutoMoveTargetFolderPath"]));
+            }
+            set {
+                this["AutoMoveTargetFolderPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AutoMoveDestinationFolderPath {
+            get {
+                return ((string)(this["AutoMoveDestinationFolderPath"]));
+            }
+            set {
+                this["AutoMoveDestinationFolderPath"] = value;
             }
         }
     }
