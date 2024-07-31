@@ -14,7 +14,7 @@ namespace trmua_utils.utils
     {
         private CancellationTokenSource? _cts;
         public event Action<string>? LogMessage;
-        private static string REGEX = @"^(?:\d{3}-\d{4}(?:\s*\(\d+\))?|\d{3}(?:-[A-Z])?|\d{3}-\d{4}\.[A-Z]|\d{4})$";
+        private static string pattern = @"^(?:\d{3}-\d{4}(?:\s*\(\d+\))?|\d{3}(?:-[A-Z])?|\d{3}-\d{4}\.[A-Z]|\d{4}).tiff$";
 
         public async Task AutoMoveAsync(string targetFolder, string destinationFolder, Dispatcher dispatcher)
         {
@@ -31,18 +31,50 @@ namespace trmua_utils.utils
 
         private async Task AutoMoveActionAsync(string targetFolder, string destinationFolder, Dispatcher dispatcher)
         {
-            if (!Directory.Exists(targetFolder))
+            if (!Directory.Exists(targetFolder) || !Directory.Exists(destinationFolder))
             {
-                LogMessage?.Invoke($"Folder {targetFolder} does not exist");
+                LogMessage?.Invoke($"Folder {targetFolder} does not exist.\n Cancelling operation");
                 _cts?.Cancel();
                 return; 
             }
 
             await dispatcher.InvokeAsync(() =>
             {
-                //Rules: date no later thatn 24hours, matches regex, filecount not greater than 50
-                var directory = new DirectoryInfo(targetFolder).GetFiles(REGEX);
-                LogMessage.Invoke($"found {directory.Length} files in {targetFolder}");
+                try
+                {
+                    //Rules: date no later thatn 24hours, matches regex, filecount not greater than 50
+                    var directory = new DirectoryInfo(targetFolder);
+                    Regex re = new Regex(pattern);
+
+                    var matchingFiles = directory.EnumerateFiles("*", SearchOption.TopDirectoryOnly)
+                        .Where(file => re.IsMatch(file.Name))
+                        .OrderByDescending(file => file.LastWriteTime)
+                        .Take(100)
+                        .ToList();
+                    if (matchingFiles.Count is 0)
+                    {
+                        LogMessage?.Invoke($"found no files in {directory}. Cancelling operation");
+                        _cts?.Cancel();
+                    }
+                    LogMessage?.Invoke($"found {matchingFiles.Count} files in {directory}");
+
+                    foreach (var file in matchingFiles)
+                    {
+                        file.MoveTo(destinationFolder);
+                        LogMessage?.Invoke($"moved {file.FullName} to {destinationFolder} ");
+                    }
+
+
+                }
+                catch (Exception e)
+                {
+                    LogMessage?.Invoke($"ERROR:{e}");
+
+                }
+                finally
+                {
+                    LogMessage?.Invoke($"Done moving. Stopping Operation");
+                }
 
             });
         }
