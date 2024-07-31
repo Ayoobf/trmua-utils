@@ -14,7 +14,7 @@ namespace trmua_utils.utils
     {
         private CancellationTokenSource? _cts;
         public event Action<string>? LogMessage;
-        private static string pattern = @"^(?:\d{3}-\d{4}(?:\s*\(\d+\))?|\d{3}(?:-[A-Z])?|\d{3}-\d{4}\.[A-Z]|\d{4}).tiff$";
+        private static string pattern = @"^(?:\d{3}(?:-\d{4})?(?:\s*\(\d+\))?(?:\s*-\s*Copy)?|\d{3}(?:-[A-Z])?|\d{3}-\d{4}\.[A-Z]|\d{4})\.(?:tif|tiff)$";
 
         public async Task AutoMoveAsync(string targetFolder, string destinationFolder, Dispatcher dispatcher)
         {
@@ -63,8 +63,35 @@ namespace trmua_utils.utils
                     LogMessage?.Invoke($"found {matchingFiles.Count} files in {directory}");
                     foreach (var file in matchingFiles)
                     {
-                        file.MoveTo(destinationFolder);
-                        LogMessage?.Invoke($"moved {file.FullName} to {destinationFolder} ");
+                        if (_cts?.IsCancellationRequested == true)
+                        {
+                            LogMessage?.Invoke("Operation cancelled.");
+                            break;
+                        }
+                        try
+                        {
+                            string destinationPath = Path.Combine(destinationFolder, file.Name);
+                            if (File.Exists(destinationPath))
+                            {
+                                // Option 1: Generate a unique name
+                                string newName = GetUniqueFileName(destinationPath);
+                                file.MoveTo(newName);
+                                LogMessage?.Invoke($"Moved {file.FullName} to {newName} (renamed due to existing file)");
+                            }
+                            else
+                            {
+                                file.MoveTo(destinationPath);
+                                LogMessage?.Invoke($"Moved {file.FullName} to {destinationPath}");
+                            }
+                        }
+                        catch (IOException ioEx)
+                        {
+                            LogMessage?.Invoke($"IO Error moving file {file.Name}: {ioEx.Message}");
+                        }
+                        catch (Exception e)
+                        {
+                            LogMessage?.Invoke($"Error moving file {file.Name}: {e.Message}");
+                        }
                     }
                 }
                 catch (OperationCanceledException)
@@ -80,10 +107,24 @@ namespace trmua_utils.utils
                 {
                     LogMessage?.Invoke($"Done moving. Stopping Operation");
                 }
-
+            
             });
         }
+        private string GetUniqueFileName(string filePath)
+        {
+            string directory = Path.GetDirectoryName(filePath);
+            string fileName = Path.GetFileNameWithoutExtension(filePath);
+            string extension = Path.GetExtension(filePath);
+            int counter = 1;
 
+            while (File.Exists(filePath))
+            {
+                filePath = Path.Combine(directory, $"{fileName}_{counter}{extension}");
+                counter++;
+            }
+
+            return filePath;
+        }
         public void Stop()
         {
             _cts?.Cancel();
