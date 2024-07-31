@@ -290,6 +290,20 @@ namespace trmua_utils
 
         }
 
+        private async void AutoMove_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                await _autoMove.AutoMoveAsync(autoMoveTargetFolderPath.Text, autoMoveDestinationFolderPath.Text, Dispatcher);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            }
+        }
+
+
         private async void ClearLogs_Click(object sender, RoutedEventArgs e)
         {
             outputTextBlock.Text = string.Empty;
