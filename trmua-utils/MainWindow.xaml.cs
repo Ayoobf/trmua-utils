@@ -294,6 +294,10 @@ namespace trmua_utils
         {
             try
             {
+                if (_isRefreshing)
+                {
+                    _refresh.Stop();
+                }
                 await _autoMove.AutoMoveAsync(autoMoveTargetFolderPath.Text, autoMoveDestinationFolderPath.Text, Dispatcher);
             }
             catch(Exception ex)
@@ -302,7 +306,6 @@ namespace trmua_utils
 
             }
         }
-
 
         private async void ClearLogs_Click(object sender, RoutedEventArgs e)
         {
